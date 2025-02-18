@@ -19,8 +19,7 @@ def create_app():
     jwt.init_app(app)
     migrate.init_app(app, db)
 
-    # Import models to ensure they're known to Flask-Migrate
-    from models import User, Product, CartItem, Order, OrderItem
+    print("JWT Manager initialized")  # Debug print
 
     # Register blueprints
     from resources.auth import bp as auth_bp
