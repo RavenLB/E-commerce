@@ -89,7 +89,6 @@ def get_products():
             return jsonify({
                 "message": "No products found matching your criteria",
                 "total": 0,
-                "categories": categories,
                 "products": []
             })
         
