@@ -13,6 +13,8 @@ def login():
         data = user_schema.load(request.get_json(), partial=('username',))
         user = User.query.filter_by(email=data['email']).first()
         
+        print(f"User found: {user}")  # Debug print
+        
         if user and user.check_password(data['password']):
             access_token = create_access_token(identity=str(user.id))
             return jsonify({

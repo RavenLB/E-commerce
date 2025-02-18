@@ -7,6 +7,7 @@ from models.order import Order, OrderItem
 from models.product import Product
 from schemas import cart_item_schema, cart_items_schema, order_schema
 from sqlalchemy.exc import IntegrityError
+from resources.stripe import create_payment_intent
 
 bp = Blueprint('cart', __name__, url_prefix='/cart')
 
@@ -206,6 +207,11 @@ def checkout():
             # Update product stock
             product.stock -= cart_item.quantity
         
+        # Create payment intent
+        payment_intent = create_payment_intent(int(total_amount * 100))
+        if not payment_intent:
+            return jsonify({"message": "Payment processing failed"}), 500
+        
         # Create order
         order = Order(
             user_id=user_id,
@@ -232,9 +238,14 @@ def checkout():
             
         db.session.commit()
         
+        # After creating the payment intent
+        order.status = 'paid'  # Simulate successful payment
+        db.session.commit()
+        
         return jsonify({
             "message": "Order created successfully",
-            "order": order_schema.dump(order)
+            "order": order_schema.dump(order),
+            "payment_intent": payment_intent
         }), 201
         
     except Exception as e:
