@@ -1,8 +1,12 @@
 import stripe
-from flask import current_app
+import os
+import dotenv
 
-# Initialize Stripe with your secret key
-stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+# Load environment variables from .env
+dotenv.load_dotenv()
+
+# Set API key
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 def create_payment_intent(amount, currency='eur'):
     try:
